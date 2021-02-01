@@ -1,0 +1,16 @@
+version: '3'
+services:
+  openintel-lookup:
+    build: .
+    ports:
+      - ${SERVICE_PORT:-8888}:${INTERNAL_HTTP_PORT:-80}
+    environment:
+      - PORT=${INTERNAL_HTTP_PORT:-80}
+      - DB=${DBNAME:-openintel}
+      - DBHOST=${DBHOST:-localhost}
+      # DBPORT must point to the JDBC/ODBC layer of the hadoop installation (default: 21050)
+      - DBPORT=${DBPORT:-21050}
+      # to further configure the web server please see the uvicorn-gunicorn
+      # documentation: https://hub.docker.com/r/tiangolo/uvicorn-gunicorn
+    volumes:
+      - ./app:/app

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>OpenINTEL Lookup - About</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">OpenINTEL Lookup</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/?queryType=ips_by_domains">Domains --> IPs
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/?queryType=domains_by_ips">IPs --> Domains
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/?queryType=ips_by_mx_pattern">MX SQL LIKE Pattern
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/api/v1/about">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <!-- Begin page content -->
+  <main role="main" class="container">
+    <h1 class="mt-5">openintel-lookup</h1>
+    <div class="card">
+        <div class="card-header">About OpenINTEL</div>
+        <div class="card-body">
+            <p>
+              This API provides an easy to use interface to query OpenINTEL data in order to find IP
+              adresses associated with domain names and vice versa.
+            </p>
+            <p>
+                <a ref="https://openintel.nk">OpenINTEL</a> is a project by the University of Twente.
+                The project's goal is to actively query all DNS records within a number of DNS zones
+                in order to build a high quality data series that captures the state of the DNS system.
+            </p>
+            <p>
+                For an in depth description of the project as well as a list of the measurements that
+                are taken, please visit <a href="https://www.openintel.nl/background/">OpenINTEL's background</a>
+                page.
+            </p>
+            <p>
+              In addition the following paper provides details on the measurement methodology:
+              <blockquote style="margin-left:20px;">
+                R. van Rijswijk-Deij, M. Jonker, A. Sperotto and A. Pras,
+                "A High-Performance, Scalable Infrastructure for Large-Scale Active DNS Measurements,"
+                in IEEE Journal on Selected Areas in Communications, vol. 34, no. 6, pp. 1877-1888, June 2016,
+                <a href="https://dx.doi.org/10.1109/JSAC.2016.2558918">doi: 10.1109/JSAC.2016.2558918</a>.
+              </blockquote>
+            </p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">Queries</div>
+        <div class="card-body">
+            <p>
+                This service provides three basic types of queries:
+                <ul>
+                  <li>Domains --> IPs: find the IP addresses associated with a domain name</li>
+                  <li>IPs --> Domains: find the domain names associated with an IP address</li>
+                  <li>MX SQL LIKE pattern: find IP addresses associated with an MX record pattern</li>
+                </ul>
+
+            </p>
+            <h2>Domains --> IPs</h2>
+            <p>
+                This query returns the IP adresses that are linked directly with a Domain name (in A and AAAA records)
+                as well as the IP adresses found associated with names that are pointed to by NS, MX, CNAME, DNAME, and SOA
+                records.
+            </p>
+            <div class="row justify-content-md-center">
+                <div class="col col-lg-10">
+                    <img src="/static/domain2ip.png" class="img-fluid" alt="Responsive image">
+                </div>
+            </div>
+            <h2>IPs --> Domains</h2>
+            <p>
+                This query looks for domain names that point to the given IP address either directly (in A or AAAA records)
+                or via intermediate NS, MX, CNAME, DNAME, or SOA records.
+            </p>
+            <div class="row justify-content-md-center">
+                <div class="col col-lg-10">
+                    <img src="/static/ip2domain.png" class="img-fluid" alt="Responsive image">
+                </div>
+            </div>
+            <h2>MX SQL LIKE Pattern</h2>
+            <p>
+                This query looks for the IP addresses and domain names associated with MX records that fit a given pattern.
+            </p>
+            <div class="row justify-content-md-center">
+                <div class="col col-lg-10">
+                    <img src="/static/mx2domainip.png" class="img-fluid" alt="Responsive image">
+                </div>
+            </div>
+        </div>
+    </div>
+  </main>
+
+</body>
+
+</html>

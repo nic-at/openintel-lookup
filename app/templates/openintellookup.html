@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>OpenINTEL Lookup</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css"/>
+  <link href="/vendor/datatables-buttons-dt/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css"/>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">OpenINTEL Lookup</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/?queryType=ips_by_domains">Domains --> IPs
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/?queryType=domains_by_ips">IPs --> Domains
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/?queryType=ips_by_mx_pattern">MX SQL LIKE Pattern
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/api/v1/about">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+          <h1>{{headline}}</h1>
+        <form id="queryform">
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col">
+                <label for="input">{{inputTextLabel}}</label>
+                <!--<input type="textarea" class="form-control" id="inputdomain" name="inputdomain" placeholder="Domain name to look up" required>-->
+                <{{inputfieldtype}} class="form-control" id="input" rows="7" placeholder="{{inputplaceholder}}" style="resize:both;" autofocus></textarea>
+              </div>
+              <div class="col">
+                <label for="fromdate">From date</label>
+                <input type="date" class="form-control" id="date_from" name="date_from" min="2016-01-01" max="{{ todayString }}" value="{{ startDate }}" required>
+              </div>
+              <div class="col">
+                <label for="todate">To date</label>
+                <input type="date" class="form-control" id="date_to" name="date_to" min="2016-01-01" max="{{ todayString }}" value="{{ endDate }}" required>
+              </div>
+              <div class="col">
+                <label for="todate">Limit rows</label>
+                <input type="text" class="form-control" id="limit" name="limit" value=100>
+              </div>
+            </div>
+          </div>
+          <div class="row text-center">
+            <div class="col-lg-12 text-center">
+              <p><a href="/api/v1/about" target="_blank">What is queried?</a></p>
+            </div>
+          </div>
+          <div class="row text-center">
+            <div class="col-lg-12 text-center">
+                <button id="queryform_submit" type="submit" class="btn btn-primary">Query</button>
+            </div>
+          </div>
+        </form>
+         <br />
+        <button id="download_details" class="btn btn-info" disabled>Download Measurement Details</button>
+        <div class="row text-center">
+          <div class="col-lg-12 text-center">
+            <p>(Select a result row below to download the corresponding measurements)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   <!--<div class="container"> -->
+    <div>
+      <h1>Listing Results:</h1>
+    </div>
+   <div class="row">
+      <div class="col-lg-12 text-center">
+        <table id="data" class="display" style="width:100%" data-page-length='100'>
+          <thead>
+            <tr>
+              {% for column in columns %}
+                <th>
+                {{ column }}
+                </th>
+              {%- endfor %}
+            </tr>
+          </thead>
+          <tbody>
+              <tr> </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              {% for column in columns %}
+                <th>
+                {{ column }}
+                </th>
+              {%- endfor %}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+ <!-- </div> -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/vendor/jquery/jquery.js" type="text/javascript"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.js" type="text/javascript"></script>
+  <script src="/vendor/datatables/js/jquery.dataTables.js" type="text/javascript"></script>
+  <script src="/vendor/datatables-buttons/dataTables.buttons.min.js" type="text/javascript"></script>
+  <script src="/vendor/datatables-buttons/buttons.colVis.min.js" type="text/javascript"></script>
+  <script src="/vendor/datatables-buttons/buttons.html5.js" type="text/javascript"></script>
+  <script src="/vendor/datatables-buttons-dt/js/buttons.dataTables.min.js" type="text/javascript"></script>
+
+  <script type="text/javascript">
+  // Example starter JavaScript for disabling form submissions if there are invalid fields
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.getElementsByClassName('needs-validation');
+      // Loop over them and prevent submission
+      var validation = Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
+
+    $(document).ready(function(){
+      $( "#queryform" ).on("submit", function( event ) {
+        event.preventDefault();
+        var userInput = $("#input").val().split("\n");
+        for (var i = 0; i < userInput.length; i++) {
+           userInput[i] = userInput[i].trim()
+        }
+        console.log(userInput);
+        console.log(JSON.stringify(userInput));
+        var fields = $( "#date_from, #date_to, #limit" ).serialize();
+        var url = "/api/v1/{{queryType}}/" + "?" + fields;
+        document.getElementById('queryform_submit').disabled = true;
+        var table = $('#data').DataTable( {
+          "destroy": true,
+          "initComplete": function(settings, json) {
+            document.getElementById('queryform_submit').disabled = false;
+              // Code: https://datatables.net/examples/api/multi_filter.html
+              // Zur fulltext filterung
+                $('#data tfoot th').each( function () {
+                    var title = $(this).text();
+                    $(this).html( title+'<br /><input type="text" placeholder="Fulltext Filter" size=10 style="resize:both;"/>' );
+                } );
+            this.api().columns().every( function () {
+                var that = this;
+                $( 'input', this.footer() ).on( 'keyup change clear', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
+          },
+          "ajax": {
+            "url": url,
+            "type": "POST",
+            "contentType": "application/json",
+            "data": function ( d ) {
+              return JSON.stringify(userInput);
+            }
+          },
+          "columns": [
+            {% for column in columns %}
+              { "data": "{{ column }}" }{{ ", " if not loop.last }}
+            {%- endfor %}
+          ],
+          "dom": 'Bfrtip',
+          "buttons": [
+            {
+              extend: "csv",
+              fieldSeparator: ";",
+              text: "Download table as CSV",
+              fieldBoundary: '"'
+            }
+          ]
+        } );
+
+           $('#download_details').click( function (e) {
+               var domain ;
+               var IP;
+               var dateFrom = $("#date_from").val()
+               var dateTo = $("#date_to").val()
+                 if ('{{queryType}}' == 'ips_by_domains') {
+                       domain = table.row('.selected').data()['record_names'];
+                       IP = table.row('.selected').data()['ip_address'];
+                  }
+                 if ('{{queryType}}' == 'domains_by_ips') {
+                       domain = table.row('.selected').data()['query_name'];
+                       IP = table.row('.selected').data()['ip_address'];
+                  }
+                 if ('{{queryType}}' == 'ips_by_mx_pattern') {
+                       domain = table.row('.selected').data()['mx_address'];
+                       IP = table.row('.selected').data()['ip_address'];
+                  }
+               e.preventDefault();  //stop the browser from following
+               var path = "/api/v1/measurements_by_domain/"+domain+"/csv?ip="+IP+"&date_from="+dateFrom+"&date_to="+dateTo+"&full=false";
+               window.location.href = path; // download file
+
+            } );
+
+            $('#data tbody').off('click', 'tr').on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                    document.getElementById('download_details').disabled = true;
+                }
+                else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                    document.getElementById('download_details').disabled = false;
+                }
+            } );
+      });
+    });
+  </script>
+</body>
+</html>

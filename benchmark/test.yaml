@@ -1,0 +1,51 @@
+# configuration for artillery load testint (https://artillery.io/)
+# to use this script first generate a CSV file 'domains.csv' with a
+# column domain_name and fill it with domain names to query during
+# testing.
+config:
+  target: "http://localhost:8989"
+  processor: "functions.js"
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      maxVusers: 5
+      name: Constant load
+  plugins:
+    metrics-by-endpoint: {}
+  http:
+    # Responses have to be sent within 10 seconds or the request will be aborted
+    timeout: 600
+  payload:
+    # Load search keywords from an external CSV file and make them available
+    # to virtual user scenarios as variable "keywords":
+    path: "domains.csv"
+    fields:
+      - "domain_name"
+scenarios:
+  - name: "Lookup single domain name, single day"
+    weight: 3
+    flow:
+      - post:
+          url: "/api/v1/ips_by_domains/?date_from=2020-11-08&date_to=2020-11-08&limit=100"
+          body: '["{{ domain_name }}"]'
+          headers:
+            Accept: "application/json, text/javascript, */*; q=0.01"
+          #afterResponse: "printStatus" # uncomment to see URI and status code in log
+  - name: "Lookup single domain name, 1 week"
+    weight: 3
+    flow:
+      - post:
+          url: "/api/v1/ips_by_domains/?date_from=2020-11-01&date_to=2020-11-08&limit=100"
+          body: '["{{ domain_name }}"]'
+          headers:
+            Accept: "application/json, text/javascript, */*; q=0.01"
+          #afterResponse: "printStatus" # uncomment to see URI and status code in log
+  - name: "Lookup single domain name, 1 year time window"
+    weight: 1
+    flow:
+      - post:
+          url: "/api/v1/ips_by_domains/?date_from=2019-11-08&date_to=2020-11-08&limit=100"
+          body: '["{{ domain_name }}"]'
+          headers:
+            Accept: "application/json, text/javascript, */*; q=0.01"
+          #afterResponse: "printStatus" # uncomment to see URI and status code in log
