@@ -18,7 +18,7 @@ config.update(dict(
     DBHOST=os.getenv('DBHOST'),
     DBPORT=os.getenv('DBPORT'),
     N_RECONNECT_TRIES=5,
-    RECONNECT_DELAY=1.0, #s
+    RECONNECT_DELAY=1.0,  # seconds
     baseurl='http://localhost:8989'
 ))
 
