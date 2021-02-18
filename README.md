@@ -51,7 +51,7 @@ CREATE EXTERNAL TABLE openintel.measurements (
  -- ... other table properties
 ```
 
-The [docker-compose.yml] file  makes building and deploying the service on your local docker installation easy.
+The [docker-compose.yml](docker-compose.yml) file  makes building and deploying the service on your local docker installation easy.
 
 + First create a `.env` file:
     ```
