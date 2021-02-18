@@ -8,11 +8,14 @@ next_level = defaultdict(lambda: None)
 next_level['year'] = 'month'
 next_level['month'] = 'day'
 
+
 def get_field():
     return "CAST(%(prefix)s.%(field)s AS integer)"
 
+
 def get_value(prefix):
     return "%%%%(%s_%%(field)s)s" % prefix
+
 
 def _get_date_where_sub_clauses(prefix, field, from_, to, range_='full', level=0):
     if to < from_:
@@ -54,21 +57,22 @@ def _get_date_where_sub_clauses(prefix, field, from_, to, range_='full', level=0
         # in-between periods - in these periods we take the whole periods so no additional conditions
         # are required
         if range_ == 'open-right':
-            _cases.append("(%s > %s)" % (get_field(), get_value("from")) )
+            _cases.append("(%s > %s)" % (get_field(), get_value("from")))
         elif range_ == 'open-left':
-            _cases.append("(%s < %s)" % (get_field(), get_value("to")) )
+            _cases.append("(%s < %s)" % (get_field(), get_value("to")))
         elif range_ == 'full':
             _cases.append("((%s > %s) AND (%s < %s))" % (get_field(), get_value("from"), get_field(), get_value("to")))
         else:
             raise ValueError("unknown range_ '%s'" % range_)
 
         # A date of interest can be in either of the above cases so we join them with OR
-        where_clause = ' OR '.join(map(lambda s: "(%s)"%s, _cases))
+        where_clause = ' OR '.join(map(lambda s: "(%s)" % s, _cases))
 
     if level == 0:
         return where_clause % spec
     else:
-        return "(%s)"%((where_clause %spec).replace('%','%%'))
+        return "(%s)" % ((where_clause % spec).replace('%', '%%'))
+
 
 def get_date_where_clause(prefix, from_, to):
     if not isinstance(from_, datetime.date):
@@ -76,6 +80,7 @@ def get_date_where_clause(prefix, from_, to):
     if not isinstance(to, datetime.date):
         raise ValueError("to must be a datetime.date")
     return _get_date_where_sub_clauses(prefix, "year", from_, to)
+
 
 def get_spec_for_clause(spec):
     _res = dict(spec)
@@ -86,6 +91,7 @@ def get_spec_for_clause(spec):
             _res[key + "_month"] = _res[key].month
             _res[key + "_year"] = _res[key].year
     return _res
+
 
 async def openintel_select_domains_by_ips(
     DBConnection,
@@ -109,9 +115,9 @@ async def openintel_select_domains_by_ips(
         else:
             raise RuntimeError("unexpected error: ip_address version != 4 or 6 found")
     if len(ip4_list) > 0:
-        logger.debug("fetching domains for IPv4 addresses: %s" % ', '.join(map(str,ip4_list)))
+        logger.debug("fetching domains for IPv4 addresses: %s" % ', '.join(map(str, ip4_list)))
     if len(ip6_list) > 0:
-        logger.debug("fetching domains for IPv6 addresses: %s" % ', '.join(map(str,ip6_list)))
+        logger.debug("fetching domains for IPv6 addresses: %s" % ', '.join(map(str, ip6_list)))
 
     result_dict = {
         'queried_ipv4': ip4_list,
@@ -191,11 +197,11 @@ async def openintel_select_domains_by_ips(
     }
 
     params.update({
-        '__o%i'%i: ip4
+        '__o%i' % i: ip4
         for i, ip4 in enumerate(ip4_list)
     })
     params.update({
-        '__n%i'%i: ip6
+        '__n%i' % i: ip6
         for i, ip6 in enumerate(ip6_list)
     })
 
@@ -206,7 +212,7 @@ async def openintel_select_domains_by_ips(
     results = await DBConnection.execute_query_async(
         query,
         params,
-        {'paramstyle':'format'},
+        {'paramstyle': 'format'},
         query_name="openintel_domains_by_ips"
     )
 
@@ -216,6 +222,7 @@ async def openintel_select_domains_by_ips(
         result_dict['columns'] = list(result_dict['rows'][0].keys())
 
     return result_dict
+
 
 async def openintel_select_ips_by_domains(
     DBConnection,
@@ -290,7 +297,7 @@ async def openintel_select_ips_by_domains(
     }
 
     params.update({
-        '__domain_name%i'%i: _name + "."
+        '__domain_name%i' % i: _name + "."
         for i, _name in enumerate(domains)
     })
 
@@ -301,7 +308,7 @@ async def openintel_select_ips_by_domains(
     results = await DBConnection.execute_query_async(
         query,
         params,
-        {'paramstyle':'format'},
+        {'paramstyle': 'format'},
         query_name="openintel_ips_by_domains"
     )
 
@@ -311,6 +318,7 @@ async def openintel_select_ips_by_domains(
         result_dict['columns'] = list(result_dict['rows'][0].keys())
 
     return result_dict
+
 
 async def openintel_select_ips_by_mx_records(
     DBConnection,
@@ -392,6 +400,7 @@ async def openintel_select_ips_by_mx_records(
 
     return result_dict
 
+
 async def openintel_select_measurements_by_name_and_ip_or_type(
     DBConnection,
     logger,
@@ -443,7 +452,6 @@ async def openintel_select_measurements_by_name_and_ip_or_type(
         else:
             raise RuntimeError("unknown IP protocol version")
         params['ip_address'] = ip_address.compressed
-
 
     if type is None:
         type_clause = "True"
@@ -503,6 +511,7 @@ async def openintel_select_measurements_by_name_and_ip_or_type(
 
     return result_dict
 
+
 async def openintel_select_records_summary(
     DBConnection,
     logger,
@@ -546,7 +555,6 @@ async def openintel_select_records_summary(
         else:
             raise RuntimeError("unknown IP protocol version")
         params['ip_address'] = ip_address.compressed
-
 
     if type is None:
         type_clause = "True"

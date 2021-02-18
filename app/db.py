@@ -3,6 +3,7 @@ import asyncio
 
 from impala.dbapi import connect, InterfaceError
 
+
 class HadoopDBConnection(object):
     def __init__(self, logger, config):
         self.logger = logger
@@ -10,11 +11,11 @@ class HadoopDBConnection(object):
         self.conn = None
 
         self.n_reconnect_tries = int(self.config["N_RECONNECT_TRIES"])
-        self.reconnect_delay = float(self.config["RECONNECT_DELAY"]) # seconds
+        self.reconnect_delay = float(self.config["RECONNECT_DELAY"])  # seconds
 
     def connect_to_db(self):
         self.logger.info(
-            "connecting to database %s:%s"%(
+            "connecting to database %s:%s" % (
                 self.config["DBHOST"],
                 self.config["DBPORT"]
             )

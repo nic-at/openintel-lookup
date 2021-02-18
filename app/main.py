@@ -28,6 +28,7 @@ from openintel_sql_calls import (
     openintel_select_measurements_by_name_and_ip_or_type
 )
 
+
 class CSVModel(BaseModel):
     data: str
 
@@ -35,11 +36,11 @@ class CSVModel(BaseModel):
 ###############################################################################
 # Global vars
 
-##Impyla
+# Impyla
 DBConnection = None
 cursor = None
 
-## Fast API
+# Fast API
 version = config['version']
 description = """
 ## A RESTful API for OpenINTEL
@@ -70,7 +71,7 @@ Please see %s
 
 """ % (baseurl,)
 
-## SETUP LOGGING
+# SETUP LOGGING
 logger = logging.getLogger('simple_example')
 logger.setLevel(config["loglevel"])
 # create console handler and set level to debug
@@ -86,12 +87,14 @@ logger.addHandler(logger_sh)
 #############
 # DB specific functions
 
+
 @app.on_event('startup')
 def startup():
     global DBConnection
     logger.info("starting up")
     DBConnection = HadoopDBConnection(logger, config)
     return
+
 
 @app.on_event('shutdown')
 def shutdown():
@@ -106,8 +109,9 @@ def shutdown():
 async def getIndex(request: Request):
     return templates.TemplateResponse("about_en.html", {"request": request})
 
+
 @app.get("/", response_class=HTMLResponse)
-async def showDomain2IP(request: Request,queryType: str = "ips_by_domains"):
+async def showDomain2IP(request: Request, queryType: str = "ips_by_domains"):
     if queryType == "ips_by_domains":
         columns = select_ips_by_domains_get_columns()
         inputTextLabel = "Domains"
@@ -133,9 +137,9 @@ async def showDomain2IP(request: Request,queryType: str = "ips_by_domains"):
         {
             "request": request,
             "columns": columns,
-            "queryType":queryType,
-            "inputTextLabel" : inputTextLabel,
-            "headline" : headline,
+            "queryType": queryType,
+            "inputTextLabel": inputTextLabel,
+            "headline": headline,
             "inputplaceholder": inputplaceholder,
             "inputfieldtype": inputfieldtype,
             "todayString": datetime.date.today(),
@@ -145,6 +149,8 @@ async def showDomain2IP(request: Request,queryType: str = "ips_by_domains"):
     )
 
 # API endpoint functions
+
+
 @app.get('/help')
 @app.get('/api/v1')
 async def help():
@@ -184,6 +190,7 @@ async def selftest():
     else:
         return {"message": "FAIL"}
 
+
 @app.get(
     "/api/v1/domains_by_ip/{ip}",
     name="Find domains pointing to IP",
@@ -200,7 +207,7 @@ async def select_domains_by_ip(
     results = await openintel_select_domains_by_ips(
         DBConnection,
         logger,
-        [ip,],
+        [ip, ],
         date_from,
         date_to,
         limit
@@ -208,8 +215,9 @@ async def select_domains_by_ip(
     results["data"] = results["rows"]
     del(results["rows"])
     dt = time.time() - start
-    logger.info("/api/v1/domains_by_ip/{ip} completed in %f s" % dt )
+    logger.info("/api/v1/domains_by_ip/{ip} completed in %f s" % dt)
     return results
+
 
 @app.post(
     "/api/v1/domains_by_ips/",
@@ -235,8 +243,9 @@ async def select_domains_by_ips(
     results["data"] = results["rows"]
     del(results["rows"])
     dt = time.time() - start
-    logger.info("/api/v1/domains_by_ips/ completed lookup if %i domains in %f s" % (len(ips), dt) )
+    logger.info("/api/v1/domains_by_ips/ completed lookup if %i domains in %f s" % (len(ips), dt))
     return results
+
 
 def select_domains_by_ips_get_columns():
     return [
@@ -251,6 +260,7 @@ def select_domains_by_ips_get_columns():
         "first_ts",
         "last_ts"
     ]
+
 
 @app.get(
     "/api/v1/ips_by_domain/{domain}",
@@ -268,7 +278,7 @@ async def select_ips_by_domain(
     results = await openintel_select_ips_by_domains(
         DBConnection,
         logger,
-        [domain,],
+        [domain, ],
         date_from,
         date_to,
         limit
@@ -276,8 +286,9 @@ async def select_ips_by_domain(
     results["data"] = results["rows"]
     del(results["rows"])
     dt = time.time() - start
-    logger.info("/api/v1/domains_by_ip/{ip} completed in %f s" % dt )
+    logger.info("/api/v1/domains_by_ip/{ip} completed in %f s" % dt)
     return results
+
 
 @app.post(
     "/api/v1/ips_by_domains/",
@@ -303,8 +314,9 @@ async def select_ips_by_domains(
     results["data"] = results["rows"]
     del(results["rows"])
     dt = time.time() - start
-    logger.info("/api/v1/domains_by_ip/{ip} completed lookup of %i domains in %f s" % (len(domains), dt) )
+    logger.info("/api/v1/domains_by_ip/{ip} completed lookup of %i domains in %f s" % (len(domains), dt))
     return results
+
 
 def select_ips_by_domains_get_columns():
     return [
@@ -317,6 +329,7 @@ def select_ips_by_domains_get_columns():
         "first_ts",
         "last_ts"
     ]
+
 
 @app.post(
     "/api/v1/ips_by_mx_pattern/",
@@ -342,8 +355,9 @@ async def select_ips_by_mx_pattern(
     results["data"] = results["rows"]
     del(results["rows"])
     dt = time.time() - start
-    logger.info("/api/v1/ips_by_mx_pattern/ completed in %f s" % dt )
+    logger.info("/api/v1/ips_by_mx_pattern/ completed in %f s" % dt)
     return results
+
 
 def select_ips_by_mx_pattern_get_columns():
     return [
@@ -355,6 +369,7 @@ def select_ips_by_mx_pattern_get_columns():
         "first_ts",
         "last_ts"
     ]
+
 
 @app.get(
     "/api/v1/measurements_by_domain/{domain}",
@@ -386,8 +401,9 @@ async def select_measurements_by_domain(
     results["data"] = results["rows"]
     del(results["rows"])
     dt = time.time() - start
-    logger.info("/api/v1/measurements_by_domain_ip/{domain} completed in %f s" % dt )
+    logger.info("/api/v1/measurements_by_domain_ip/{domain} completed in %f s" % dt)
     return results
+
 
 @app.get(
     "/api/v1/measurements_by_domain/{domain}/csv",
@@ -395,7 +411,7 @@ async def select_measurements_by_domain(
     summary="Find all measurements per domain over a timeframe, optionally filtered by IP or record_type as a csv file",
     tags=["Measurement Histories"],
     response_class=StreamingResponse,
-    responses= {
+    responses={
         200: {
             "description": "Measurement history of domain {domain}",
             "content": {
@@ -462,4 +478,3 @@ async def select_measurements_by_domain_csv(
     print(csv_filename)
 
     return response
-
