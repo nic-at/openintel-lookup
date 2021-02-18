@@ -31,7 +31,7 @@ def _get_date_where_sub_clauses(prefix, field, from_, to, range_='full', level=0
         # put together the statement for this line
         # three cases:
         #   first period - need to include where clause of next level
-        #   periods in between - take alle entries
+        #   periods in between - take all entries
         #   last period - need to include where clause of next level
         # if the range_ is open to one side, only include the side opposite to the open side and skip the other one
 
