@@ -28,14 +28,14 @@ In order to use openintel-lookup you require
 + [Apache impala](https://impala.apache.org/) to execute the queries,
 + and a way to build and run [docker](https://www.docker.com/) containers.
 
-The python and javascript dependencies can be found in [app/requirements.txt](app/requirements.txt)
+The python and JavaScript dependencies can be found in [app/requirements.txt](app/requirements.txt)
 and [app/package.json](app/package.json), respectively. The openintel-lookup docker container is build on
 top of the [tiangolo/uvicorn-gunicorn](https://hub.docker.com/r/tiangolo/uvicorn-gunicorn) container.
 
 No data is provided with this repository. The required data must be obtained from the OpenINTEL project directly.
 
 ## Setup
-openintel uses [Apache impala](https://impala.apache.org/) to query the dataset and expects that the openintel table is partitioned by the measurement's day, month, and year. The create table statement must look like this:
+OpenINTEL uses [Apache impala](https://impala.apache.org/) to query the dataset and expects that the OpenINTEL table is partitioned by the measurement's day, month, and year. The create table statement must look like this:
 ``` sql
 default> show create table openintel.measurements;
 CREATE EXTERNAL TABLE openintel.measurements (
@@ -77,7 +77,7 @@ load testing tool.
 
 ## License
 openintel-lookup is published under the MIT License. Please see the enclosed
-[LICENSE](LICENSE) for ruther information.
+[LICENSE](LICENSE) for further information.
 
 
 ## Funded by
