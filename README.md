@@ -4,8 +4,9 @@
 openintel-lookup provides a user interface and an API that allows querying 
 [OpenINTEL](https://openintel.nl) data.
 
-OpenINTEL is a project by the [University of Twente](https://www.utwente.nl). The project's
-goal is to actively query all DNS records within a number of DNS zones in order to build a
+OpenINTEL is a collaboration by the [University of Twente](https://www.utwente.nl), 
+[SURFnet](https://www.surf.nl/), [SIDN Labs](https://www.sidnlabs.nl/) and [NLnet Labs](https://www.nlnetlabs.nl/). 
+The project's goal is to actively query all DNS records within a number of DNS zones in order to build a
 high quality data series that captures the state of the DNS system over time. An
 [in depth description of the measurements taken](https://openintel.nl/background/) and
 [the data that is available](https://openintel.nl/data-access/) can be found on the OpenINTEL
